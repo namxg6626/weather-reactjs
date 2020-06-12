@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { connect } from "react-redux";
 
-function App() {
+// action generator
+import { forecastActionGenerator } from "./redux/saga/forecast.saga";
+import { currentWeatherActionGenerator } from "./redux/saga/currentWeather.saga";
+
+// component
+import SearchBox from "./components/SearchBox";
+import WeatherToday from "./components/WeatherToday";
+import Forecast from "./components/Forecast";
+
+import "./App.scss";
+
+function App({ setDefaultCity }) {
+  React.useEffect(() => {
+    setDefaultCity();
+  }, [setDefaultCity]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="webpage">
+      <SearchBox placeholder="Tên tỉnh/thành phố. Ví dụ: Hà Nội" />
+      <WeatherToday />
+      <Forecast />
     </div>
   );
 }
 
-export default App;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setDefaultCity: () => {
+      dispatch(currentWeatherActionGenerator("Hà Nội"));
+      dispatch(forecastActionGenerator("Hà Nội"));
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(App);
